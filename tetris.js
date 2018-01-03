@@ -13,11 +13,29 @@ const matrix = [
   [0, 1, 0]
 ];
 
-matrix.forEach((row, y) => {
-  row.forEach((value, x) => {
-    if (value !== 0) {
-      context.fillStyle = 'blue';
-      context.fillRect(x, y, 1, 1);
-    }
-  })
-})
+function draw() {
+  drawMatrix(player.matrix, player.position);
+}
+
+function drawMatrix(matrix, offset) {
+  matrix.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        context.fillStyle = 'blue';
+        context.fillRect(x + offset.x, 
+                         y + offset.y, 
+                         1, 
+                         1);
+      }
+    })
+  });
+}
+
+
+const player = {
+  position: {x: 5, y: 5},
+  matrix: matrix
+}
+
+draw();
+
