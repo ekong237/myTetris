@@ -4,9 +4,6 @@ const context = canvas.getContext('2d');
 
 context.scale(20,20);
 
-context.fillStyle = '#000';
-context.fillRect(0, 0, canvas.width, canvas.height);
-
 const matrix = [
   [0, 0, 0],
   [1, 1, 1],
@@ -14,6 +11,8 @@ const matrix = [
 ];
 
 function draw() {
+  context.fillStyle = '#000';
+  context.fillRect(0, 0, canvas.width, canvas.height);
   drawMatrix(player.matrix, player.position);
 }
 
@@ -24,18 +23,21 @@ function drawMatrix(matrix, offset) {
         context.fillStyle = 'blue';
         context.fillRect(x + offset.x, 
                          y + offset.y, 
-                         1, 
-                         1);
+                         1, 1);
       }
     })
   });
 }
 
+function update() {
+  draw();
+  requestAnimationFrame(update)
+}
 
 const player = {
   position: {x: 5, y: 5},
   matrix: matrix
 }
 
-draw();
+update();
 
