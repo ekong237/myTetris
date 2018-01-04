@@ -10,6 +10,21 @@ const matrix = [
   [0, 1, 0]
 ];
 
+function noCollision(arena, player) {
+  const m = player.matrix;
+  const p = player.position;
+  for (let y = 0; y < m.length; ++y) { // row
+    for (let x = 0; x < m[y].length; ++x) { //col
+      if (m[y][x] !== 0 &&
+          (arena[y + p.y] && 
+          arena[y + p.y][x + p.x]) !== 0) { // arena row exists and no collision
+          return true;
+      }
+    }
+  }
+  return false;
+}
+
 function createMatrix(w, h) {
   const matrix = [];
   while (h--) {
@@ -21,6 +36,8 @@ function createMatrix(w, h) {
 function draw() {
   context.fillStyle = '#000';
   context.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawMatrix(arena, {x: 0, y: 0})
   drawMatrix(player.matrix, player.position);
 }
 
@@ -47,6 +64,17 @@ function merge(arena, player) {
   })
 }
 
+function playerDrop() {
+  player.position.y++;
+  if (noCollision(arena, player)) { //touching ground or another piece
+    console.log('hit bottom');
+    player.position.y--;
+    merge(arena, player);
+    player.position.y = 0; //when piece hits bottom, start from top again
+  }
+  dropCounter = 0;
+}
+
 let dropCounter = 0;
 let dropInterval = 1000; // every one sec drop the piece by one step
 
@@ -56,8 +84,7 @@ function update(time = 0) {
   lastTime = time;
   dropCounter += deltaTime;
   if (dropCounter > dropInterval) {
-    player.position.y++;
-    dropCounter = 0;
+    playerDrop();
   }
   draw();
   requestAnimationFrame(update)
@@ -78,8 +105,8 @@ document.addEventListener('keydown', event => {
   } else if (event.keyCode === 39) {
     player.position.x++;
   } else if (event.keyCode === 40) {
-    player.position.y++;
-    dropCounter = 0;
+    // console.log('drop');
+    playerDrop();
   }
 });
 
