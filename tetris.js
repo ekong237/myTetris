@@ -29,7 +29,20 @@ function drawMatrix(matrix, offset) {
   });
 }
 
-function update() {
+let dropCounter = 0;
+let dropInterval = 1000; // every one sec drop the piece by one step
+
+let lastTime = 0;
+function update(time = 0) { 
+  const deltaTime = time - lastTime;
+  lastTime = time;
+  console.log('lasttime', lastTime);
+  dropCounter += deltaTime;
+  console.log('dropcounter:', dropCounter);
+  if (dropCounter > dropInterval) {
+    player.position.y++;
+    dropCounter = 0;
+  }
   draw();
   requestAnimationFrame(update)
 }
