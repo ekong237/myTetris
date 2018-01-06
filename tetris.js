@@ -83,7 +83,19 @@ function playerMove(direction) {
 }
 
 function playerRotate(direction) {
+  const pos = player.position.x;
+  let offset = 1;
   rotate(player.matrix, direction);
+  while (collide(arena, player)) { // we can still rotate on the wall, so after we rotate, we have to check collision again
+    player.position.x += offset;
+    offset = -(offset + (offset > 0 ? 1 : -1));
+    if (offset > player.matrix[0].length) {
+      rotate(player.matrix, -dir);
+      player.position.x = pos;
+      return;
+    }
+  }
+
 }
 
 function rotate(matrix, direction) {
