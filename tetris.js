@@ -5,6 +5,7 @@ const context = canvas.getContext('2d');
 context.scale(20,20);
 
 function arenaSweep() {
+  let rowCount = 1;
   outer: for (let y = arena.length - 1; y > 0; y--) {
     for (let x = 0; x < arena[y].length; x++) {
       if (arena[y][x] === 0) { //check if rows are fully populated
@@ -15,6 +16,9 @@ function arenaSweep() {
     const row = arena.splice(y, 1)[0].fill(0); // takes arena row out at index y, fills it with empty row
     arena.unshift(row); //adds row to top of arena
     ++y;
+
+    player.score += rowCount * 10;
+    rowCount *= 2; //for every row, double points
   }
 }
 
@@ -129,6 +133,7 @@ function playerDrop() {
     merge(arena, player);
     playerReset();
     arenaSweep();
+    updateScore();
   }
   dropCounter = 0;
 }
@@ -148,6 +153,8 @@ function playerReset() {
                       (player.matrix[0].length / 2 | 0); // drop from middle
   if (collide(arena, player)) { //if collides right after we get a new piece, that means we've reached the top and game is over
     arena.forEach(row => row.fill(0));
+    player.score = 0;
+    updateScore();
   }
 }
 
@@ -204,6 +211,10 @@ function update(time = 0) {
   requestAnimationFrame(update)
 }
 
+function updateScore() {
+  document.getElementById('score').innerText = player.score;
+}
+
 const colors = [
   null,
   'red',
@@ -219,8 +230,9 @@ console.log(arena);
 console.table(arena);
 
 const player = {
-  position: {x: 5, y: 5},
-  matrix: createPiece('T')
+  position: {x: 0, y: 0},
+  matrix: null,
+  score: 0
 }
 
 // q and w for rotate
@@ -241,6 +253,8 @@ document.addEventListener('keydown', event => {
 });
 
 
-
+playerReset();
+updateScore();
 update();
+
 
