@@ -33,6 +33,64 @@ function createMatrix(w, h) {
   return matrix;
 }
 
+// types: O, I, S, Z, L, J, T
+function createPiece(type) {
+  if (type === 'T') {
+    return [
+             [0, 0, 0],
+             [1, 1, 1],
+             [0, 1, 0]
+           ];
+  } else if (type === 'O') {
+    return [
+             [1, 1],
+             [1, 1]
+           ];
+  } else if (type === 'L') {
+    return [
+             [0, 1, 0],
+             [0, 1, 0],
+             [0, 1, 1]
+           ];
+  } else if (type === 'J') {
+    return [
+             [0, 1, 0],
+             [0, 1, 0],
+             [1, 1, 0]
+           ];
+  } else if (type === 'I') {
+    return [
+             [0, 1, 0, 0],
+             [0, 1, 0, 0],
+             [0, 1, 0, 0],
+             [0, 1, 0, 0]
+           ];
+  } else if (type === 'S') {
+    return [
+             [0, 1, 1],
+             [1, 1, 0],
+             [0, 0, 0]
+           ];
+  } else if (type === 'Z') {
+    return [
+            [1, 1, 0],
+            [0, 1, 1],
+            [0, 0, 0]
+           ];
+  }
+}
+
+function playerReset() {
+  const pieces = 'ILJOTSZ';
+  player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]); //flooring numbers using bitwise 
+  player.position.y = 0; //drop from top
+  player.position.x = (arena[0].length / 2 | 0) - 
+                      (player.matrix[0].length / 2 | 0); // drop from middle
+  if (collide(arena, player)) { //if collides right after we get a new piece, that means we've reached the top and game is over
+    arena.forEach(row => row.fill(0));
+  }
+}
+
 function draw() {
   context.fillStyle = '#000';
   context.fillRect(0, 0, canvas.width, canvas.height);
@@ -70,7 +128,8 @@ function playerDrop() {
     console.log('hit bottom or another piece');
     player.position.y--;
     merge(arena, player);
-    player.position.y = 0; //when piece hits bottom, start from top again
+    playerReset();
+    // player.position.y = 0; //when piece hits bottom, start from top again
   }
   dropCounter = 0;
 }
@@ -95,7 +154,6 @@ function playerRotate(direction) {
       return;
     }
   }
-
 }
 
 function rotate(matrix, direction) {
@@ -139,7 +197,7 @@ console.table(arena);
 
 const player = {
   position: {x: 5, y: 5},
-  matrix: matrix
+  matrix: createPiece('T')
 }
 
 // q and w for rotate
