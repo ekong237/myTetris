@@ -82,6 +82,10 @@ function playerMove(direction) {
   }
 }
 
+function playerRotate(direction) {
+  rotate(player.matrix, direction);
+}
+
 function rotate(matrix, direction) {
   for (let y = 0; y < matrix.length; y++) {
     for (x = 0; x < y; x++) {
@@ -93,7 +97,7 @@ function rotate(matrix, direction) {
         matrix[x][y]
       ]
     }
-    if (dir > 0) {
+    if (direction > 0) {
       matrix.forEach(row => row.reverse());
     } else {
       matrix.reverse();
@@ -126,6 +130,7 @@ const player = {
   matrix: matrix
 }
 
+// q and w for rotate
 document.addEventListener('keydown', event => {
   if (event.keyCode === 37) { //left
     playerMove(-1);
@@ -135,7 +140,11 @@ document.addEventListener('keydown', event => {
     // player.position.x++;
   } else if (event.keyCode === 40) { //down
     playerDrop();
-  }
+  } else if (event.keyCode === 81) { //rotate left
+    playerRotate(-1);
+  } else if (event.keyCode === 87) { //rotate right
+    playerRotate(1);
+  } 
 });
 
 
