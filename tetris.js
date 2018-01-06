@@ -10,11 +10,11 @@ const matrix = [
   [0, 1, 0]
 ];
 
-function noCollision(arena, player) {
+function collide(arena, player) {
   const m = player.matrix;
   const p = player.position;
-  for (let y = 0; y < m.length; ++y) { // row
-    for (let x = 0; x < m[y].length; ++x) { //col
+  for (let y = 0; y < m.length; y++) { // row
+    for (let x = 0; x < m[y].length; x++) { //col
       if (m[y][x] !== 0 &&
           (arena[y + p.y] && 
           arena[y + p.y][x + p.x]) !== 0) { // arena row exists and no collision
@@ -66,13 +66,40 @@ function merge(arena, player) {
 
 function playerDrop() {
   player.position.y++;
-  if (noCollision(arena, player)) { //touching ground or another piece
-    console.log('hit bottom');
+  if (collide(arena, player)) { //touching ground or another piece
+    console.log('hit bottom or another piece');
     player.position.y--;
     merge(arena, player);
     player.position.y = 0; //when piece hits bottom, start from top again
   }
   dropCounter = 0;
+}
+
+function playerMove(direction) {
+  player.position.x += direction;
+  if (collide(arena, player)) {
+    player.position.x -= direction;
+  }
+}
+
+function rotate(matrix, direction) {
+  for (let y = 0; y < matrix.length; y++) {
+    for (x = 0; x < y; x++) {
+      [
+        matrix[x][y],
+        matrix[y][x]
+      ] = [
+        matrix[y][x],
+        matrix[x][y]
+      ]
+    }
+    if (dir > 0) {
+      matrix.forEach(row => row.reverse());
+    } else {
+      matrix.reverse();
+    }
+
+  }
 }
 
 let dropCounter = 0;
@@ -101,11 +128,12 @@ const player = {
 
 document.addEventListener('keydown', event => {
   if (event.keyCode === 37) { //left
-    player.position.x--;
-  } else if (event.keyCode === 39) {
-    player.position.x++;
-  } else if (event.keyCode === 40) {
-    // console.log('drop');
+    playerMove(-1);
+    // player.position.x--;
+  } else if (event.keyCode === 39) { //right
+    playerMove(1);
+    // player.position.x++;
+  } else if (event.keyCode === 40) { //down
     playerDrop();
   }
 });
